@@ -4,11 +4,70 @@
 [hub]
         protocol = https
 [alias]
-        co = checkout
         promote = !$ZSH/bin/git-promote
         wtf     = !$ZSH/bin/git-wtf
         rank-contributors = !$ZSH/bin/git-rank-contributors
         count   = !git shortlog -sn
+        [alias]
+        up = "!f(){ git pull ${1:-origin} --rebase --autostash --prune; };f"
+        #commit on date
+        commitsAtDate = "!f() { git log --pretty='format:%C(yellow)%h %G? %ad%Cred%d %Creset%s%C(cyan) [%cn]' --decorate --after=\"$1 0:00\" --before=\"$1 23:59\"; }; f"
+        # list commits
+        ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
+        # list commits with files changed
+        ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
+        # list with no colors to pipe
+        lnc = log --pretty=format:"%h\\ %s\\ [%cn]"
+        # list commits with dates
+        lds = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short
+        # list commits with relative dates
+        ld = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=relative
+        # short log
+        le = log --oneline --decorate
+        # list commits for single file
+        filelog = log -u
+        fl = log -u
+        # list files in last commit
+        dl = "!git ll -1"
+        # diff of last commit
+        dlc = diff --cached HEAD^
+        # find file in codebase
+        f = "!git ls-files | grep -i"
+        # find string in codebase
+        grep = grep -Ii
+        gr = grep -Ii
+        # diff file changes
+        lf = diff --stat --color
+        # show last tag
+        lasttag = describe --tags --abbrev=0
+        lt = describe --tags --abbrev=0
+        # Basics
+        cp = cherry-pick
+        st = status
+        cl = clone
+        ci = commit
+        co = checkout
+        br = branch
+        cbr = "!f() { branches=$(git branch); ack --filter -1 -w -o -- '\\w.*-'"$1"'(?![^-]).*' <<< \"$branches\" | xargs git co; }; f"
+        t = tag -a
+        diff = diff --word-diff
+        dc = diff --cached
+        # Resets
+        r = reset
+        r1 = reset HEAD^
+        r2 = reset HEAD^^
+        rh = reset --hard
+        rh1 = reset HEAD^ --hard
+        rh2 = reset HEAD^^ --hard
+        # Stash
+        sl = stash list
+        sa = stash apply
+        ss = stash save
+        # Merge
+        mdev = "!current_branch=$(git rev-parse --abbrev-ref HEAD); git checkout develop; git merge $current_branch --no-edit; git checkout $current_branch;"
+        mdevpush = "!current_branch=$(git rev-parse --abbrev-ref HEAD); git checkout develop; git merge $current_branch --no-edit; git push; git checkout $current_branch;"
+        # list active branches
+        lab = "!for k in `git branch|perl -pe s/^..//`;do echo -e `git show --pretty=format:"%Cgreen%ci %Cblue%cr%Creset" $k|head -n 1`\\t$k;done|sort -r;"
 [color]
         diff = auto
         status = auto
